@@ -632,21 +632,7 @@ public int wiggleMaxLength(int[] nums) {
 
 [Leetcode](https://leetcode.com/problems/longest-common-subsequence/) / [力扣](https://leetcode-cn.com/problems/longest-common-subsequence/)
 
-```java
-    public int longestCommonSubsequence(String text1, String text2) {
-        int n1 = text1.length(), n2 = text2.length();
-        int[][] dp = new int[n1 + 1][n2 + 1];
-        for (int i = 1; i <= n1; i++) {
-            for (int j = 1; j <= n2; j++) {
-                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
-                }
-            }
-        }
-        return dp[n1][n2];
-    }
+```python
 ```
 
 # 0-1 背包
@@ -664,25 +650,7 @@ public int wiggleMaxLength(int[] nums) {
 
 <div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/8cb2be66-3d47-41ba-b55b-319fc68940d4.png" width="400px"> </div><br>
 
-```java
-// W 为背包总体积
-// N 为物品数量
-// weights 数组存储 N 个物品的重量
-// values 数组存储 N 个物品的价值
-public int knapsack(int W, int N, int[] weights, int[] values) {
-    int[][] dp = new int[N + 1][W + 1];
-    for (int i = 1; i <= N; i++) {
-        int w = weights[i - 1], v = values[i - 1];
-        for (int j = 1; j <= W; j++) {
-            if (j >= w) {
-                dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - w] + v);
-            } else {
-                dp[i][j] = dp[i - 1][j];
-            }
-        }
-    }
-    return dp[N][W];
-}
+```python
 ```
 
 **空间优化**  
@@ -695,19 +663,7 @@ public int knapsack(int W, int N, int[] weights, int[] values) {
 
 因为 dp[j-w] 表示 dp[i-1][j-w]，因此不能先求 dp[i][j-w]，防止将 dp[i-1][j-w] 覆盖。也就是说要先计算 dp[i][j] 再计算 dp[i][j-w]，在程序实现时需要按倒序来循环求解。
 
-```java
-public int knapsack(int W, int N, int[] weights, int[] values) {
-    int[] dp = new int[W + 1];
-    for (int i = 1; i <= N; i++) {
-        int w = weights[i - 1], v = values[i - 1];
-        for (int j = W; j >= 1; j--) {
-            if (j >= w) {
-                dp[j] = Math.max(dp[j], dp[j - w] + v);
-            }
-        }
-    }
-    return dp[W];
-}
+```python
 ```
 
 **无法使用贪心算法的解释**  
@@ -746,30 +702,7 @@ Explanation: The array can be partitioned as [1, 5, 5] and [11].
 
 可以看成一个背包大小为 sum/2 的 0-1 背包问题。
 
-```java
-public boolean canPartition(int[] nums) {
-    int sum = computeArraySum(nums);
-    if (sum % 2 != 0) {
-        return false;
-    }
-    int W = sum / 2;
-    boolean[] dp = new boolean[W + 1];
-    dp[0] = true;
-    for (int num : nums) {                 // 0-1 背包一个物品只能用一次
-        for (int i = W; i >= num; i--) {   // 从后往前，先计算 dp[i] 再计算 dp[i-num]
-            dp[i] = dp[i] || dp[i - num];
-        }
-    }
-    return dp[W];
-}
-
-private int computeArraySum(int[] nums) {
-    int sum = 0;
-    for (int num : nums) {
-        sum += num;
-    }
-    return sum;
-}
+```python
 ```
 
 ## 2. 改变一组数的正负号使得它们的和为一给定数
@@ -804,46 +737,12 @@ sum(P) + sum(N) + sum(P) - sum(N) = target + sum(P) + sum(N)
 
 因此只要找到一个子集，令它们都取正号，并且和等于 (target + sum(nums))/2，就证明存在解。
 
-```java
-public int findTargetSumWays(int[] nums, int S) {
-    int sum = computeArraySum(nums);
-    if (sum < S || (sum + S) % 2 == 1) {
-        return 0;
-    }
-    int W = (sum + S) / 2;
-    int[] dp = new int[W + 1];
-    dp[0] = 1;
-    for (int num : nums) {
-        for (int i = W; i >= num; i--) {
-            dp[i] = dp[i] + dp[i - num];
-        }
-    }
-    return dp[W];
-}
-
-private int computeArraySum(int[] nums) {
-    int sum = 0;
-    for (int num : nums) {
-        sum += num;
-    }
-    return sum;
-}
+```python
 ```
 
 DFS 解法：
 
-```java
-public int findTargetSumWays(int[] nums, int S) {
-    return findTargetSumWays(nums, 0, S);
-}
-
-private int findTargetSumWays(int[] nums, int start, int S) {
-    if (start == nums.length) {
-        return S == 0 ? 1 : 0;
-    }
-    return findTargetSumWays(nums, start + 1, S + nums[start])
-            + findTargetSumWays(nums, start + 1, S - nums[start]);
-}
+```python
 ```
 
 ## 3. 01 字符构成最多的字符串
@@ -861,29 +760,7 @@ Explanation: There are totally 4 strings can be formed by the using of 5 0s and 
 
 这是一个多维费用的 0-1 背包问题，有两个背包大小，0 的数量和 1 的数量。
 
-```java
-public int findMaxForm(String[] strs, int m, int n) {
-    if (strs == null || strs.length == 0) {
-        return 0;
-    }
-    int[][] dp = new int[m + 1][n + 1];
-    for (String s : strs) {    // 每个字符串只能用一次
-        int ones = 0, zeros = 0;
-        for (char c : s.toCharArray()) {
-            if (c == '0') {
-                zeros++;
-            } else {
-                ones++;
-            }
-        }
-        for (int i = m; i >= zeros; i--) {
-            for (int j = n; j >= ones; j--) {
-                dp[i][j] = Math.max(dp[i][j], dp[i - zeros][j - ones] + 1);
-            }
-        }
-    }
-    return dp[m][n];
-}
+```python
 ```
 
 ## 4. 找零钱的最少硬币数
@@ -910,23 +787,7 @@ return -1.
 
 因为硬币可以重复使用，因此这是一个完全背包问题。完全背包只需要将 0-1 背包的逆序遍历 dp 数组改为正序遍历即可。
 
-```java
-public int coinChange(int[] coins, int amount) {
-    int[] dp = new int[amount + 1];
-    for (int coin : coins) {
-        for (int i = coin; i <= amount; i++) { //将逆序遍历改为正序遍历
-            if (i == coin) {
-                dp[i] = 1;
-            } else if (dp[i] == 0 && dp[i - coin] != 0) {
-                dp[i] = dp[i - coin] + 1;
-
-            } else if (dp[i - coin] != 0) {
-                dp[i] = Math.min(dp[i], dp[i - coin] + 1);
-            }
-        }
-    }
-    return dp[amount] == 0 ? -1 : dp[amount];
-}
+```python
 ```
 
 ## 5. 找零钱的硬币数组合
@@ -947,20 +808,7 @@ Explanation: there are four ways to make up the amount:
 
 完全背包问题，使用 dp 记录可达成目标的组合数目。
 
-```java
-public int change(int amount, int[] coins) {
-    if (coins == null) {
-        return 0;
-    }
-    int[] dp = new int[amount + 1];
-    dp[0] = 1;
-    for (int coin : coins) {
-        for (int i = coin; i <= amount; i++) {
-            dp[i] += dp[i - coin];
-        }
-    }
-    return dp[amount];
-}
+```python
 ```
 
 ## 6. 字符串按单词列表分割
@@ -985,21 +833,7 @@ dict 中的单词没有使用次数的限制，因此这是一个完全背包问
 
 求解顺序的完全背包问题时，对物品的迭代应该放在最里层，对背包的迭代放在外层，只有这样才能让物品按一定顺序放入背包中。
 
-```java
-public boolean wordBreak(String s, List<String> wordDict) {
-    int n = s.length();
-    boolean[] dp = new boolean[n + 1];
-    dp[0] = true;
-    for (int i = 1; i <= n; i++) {
-        for (String word : wordDict) {   // 对物品的迭代应该放在最里层
-            int len = word.length();
-            if (len <= i && word.equals(s.substring(i - len, i))) {
-                dp[i] = dp[i] || dp[i - len];
-            }
-        }
-    }
-    return dp[n];
-}
+```python
 ```
 
 ## 7. 组合总和
@@ -1028,21 +862,7 @@ Therefore the output is 7.
 
 涉及顺序的完全背包。
 
-```java
-public int combinationSum4(int[] nums, int target) {
-    if (nums == null || nums.length == 0) {
-        return 0;
-    }
-    int[] maximum = new int[target + 1];
-    maximum[0] = 1;
-    Arrays.sort(nums);
-    for (int i = 1; i <= target; i++) {
-        for (int j = 0; j < nums.length && nums[j] <= i; j++) {
-            maximum[i] += maximum[i - nums[j]];
-        }
-    }
-    return maximum[target];
-}
+```python
 ```
 
 # 股票交易
@@ -1057,26 +877,7 @@ public int combinationSum4(int[] nums, int target) {
 
 <div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/ffd96b99-8009-487c-8e98-11c9d44ef14f.png" width="300px"> </div><br>
 
-```java
-public int maxProfit(int[] prices) {
-    if (prices == null || prices.length == 0) {
-        return 0;
-    }
-    int N = prices.length;
-    int[] buy = new int[N];
-    int[] s1 = new int[N];
-    int[] sell = new int[N];
-    int[] s2 = new int[N];
-    s1[0] = buy[0] = -prices[0];
-    sell[0] = s2[0] = 0;
-    for (int i = 1; i < N; i++) {
-        buy[i] = s2[i - 1] - prices[i];
-        s1[i] = Math.max(buy[i - 1], s1[i - 1]);
-        sell[i] = Math.max(buy[i - 1], s1[i - 1]) + prices[i];
-        s2[i] = Math.max(s2[i - 1], sell[i - 1]);
-    }
-    return Math.max(sell[N - 1], s2[N - 1]);
-}
+```python
 ```
 
 ## 2. 需要交易费用的股票交易
@@ -1100,23 +901,7 @@ The total profit is ((8 - 1) - 2) + ((9 - 4) - 2) = 8.
 
 <div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/1e2c588c-72b7-445e-aacb-d55dc8a88c29.png" width="300px"> </div><br>
 
-```java
-public int maxProfit(int[] prices, int fee) {
-    int N = prices.length;
-    int[] buy = new int[N];
-    int[] s1 = new int[N];
-    int[] sell = new int[N];
-    int[] s2 = new int[N];
-    s1[0] = buy[0] = -prices[0];
-    sell[0] = s2[0] = 0;
-    for (int i = 1; i < N; i++) {
-        buy[i] = Math.max(sell[i - 1], s2[i - 1]) - prices[i];
-        s1[i] = Math.max(buy[i - 1], s1[i - 1]);
-        sell[i] = Math.max(buy[i - 1], s1[i - 1]) - fee + prices[i];
-        s2[i] = Math.max(s2[i - 1], sell[i - 1]);
-    }
-    return Math.max(sell[N - 1], s2[N - 1]);
-}
+```python
 ```
 
 
@@ -1126,26 +911,7 @@ public int maxProfit(int[] prices, int fee) {
 
 [Leetcode](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/description/) / [力扣](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/description/)
 
-```java
-public int maxProfit(int[] prices) {
-    int firstBuy = Integer.MIN_VALUE, firstSell = 0;
-    int secondBuy = Integer.MIN_VALUE, secondSell = 0;
-    for (int curPrice : prices) {
-        if (firstBuy < -curPrice) {
-            firstBuy = -curPrice;
-        }
-        if (firstSell < firstBuy + curPrice) {
-            firstSell = firstBuy + curPrice;
-        }
-        if (secondBuy < firstSell - curPrice) {
-            secondBuy = firstSell - curPrice;
-        }
-        if (secondSell < secondBuy + curPrice) {
-            secondSell = secondBuy + curPrice;
-        }
-    }
-    return secondSell;
-}
+```python
 ```
 
 ## 4. 只能进行 k 次的股票交易
@@ -1154,28 +920,7 @@ public int maxProfit(int[] prices) {
 
 [Leetcode](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/) / [力扣](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv/description/)
 
-```java
-public int maxProfit(int k, int[] prices) {
-    int n = prices.length;
-    if (k >= n / 2) {   // 这种情况下该问题退化为普通的股票交易问题
-        int maxProfit = 0;
-        for (int i = 1; i < n; i++) {
-            if (prices[i] > prices[i - 1]) {
-                maxProfit += prices[i] - prices[i - 1];
-            }
-        }
-        return maxProfit;
-    }
-    int[][] maxProfit = new int[k + 1][n];
-    for (int i = 1; i <= k; i++) {
-        int localMax = maxProfit[i - 1][0] - prices[0];
-        for (int j = 1; j < n; j++) {
-            maxProfit[i][j] = Math.max(maxProfit[i][j - 1], prices[j] + localMax);
-            localMax = Math.max(localMax, maxProfit[i - 1][j] - prices[j]);
-        }
-    }
-    return maxProfit[k][n - 1];
-}
+```python
 ```
 
 # 字符串编辑
@@ -1194,21 +939,7 @@ Explanation: You need one step to make "sea" to "ea" and another step to make "e
 
 可以转换为求两个字符串的最长公共子序列问题。
 
-```java
-public int minDistance(String word1, String word2) {
-    int m = word1.length(), n = word2.length();
-    int[][] dp = new int[m + 1][n + 1];
-    for (int i = 1; i <= m; i++) {
-        for (int j = 1; j <= n; j++) {
-            if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
-                dp[i][j] = dp[i - 1][j - 1] + 1;
-            } else {
-                dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
-            }
-        }
-    }
-    return m + n - 2 * dp[m][n];
-}
+```python
 ```
 
 ## 2. 编辑距离
@@ -1240,30 +971,7 @@ exection -> execution (insert 'u')
 
 题目描述：修改一个字符串成为另一个字符串，使得修改次数最少。一次修改操作包括：插入一个字符、删除一个字符、替换一个字符。
 
-```java
-public int minDistance(String word1, String word2) {
-    if (word1 == null || word2 == null) {
-        return 0;
-    }
-    int m = word1.length(), n = word2.length();
-    int[][] dp = new int[m + 1][n + 1];
-    for (int i = 1; i <= m; i++) {
-        dp[i][0] = i;
-    }
-    for (int i = 1; i <= n; i++) {
-        dp[0][i] = i;
-    }
-    for (int i = 1; i <= m; i++) {
-        for (int j = 1; j <= n; j++) {
-            if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
-                dp[i][j] = dp[i - 1][j - 1];
-            } else {
-                dp[i][j] = Math.min(dp[i - 1][j - 1], Math.min(dp[i][j - 1], dp[i - 1][j])) + 1;
-            }
-        }
-    }
-    return dp[m][n];
-}
+```python
 ```
 
 ## 3. 复制粘贴字符
@@ -1284,31 +992,7 @@ In step 2, we use Paste operation to get 'AA'.
 In step 3, we use Paste operation to get 'AAA'.
 ```
 
-```java
-public int minSteps(int n) {
-    if (n == 1) return 0;
-    for (int i = 2; i <= Math.sqrt(n); i++) {
-        if (n % i == 0) return i + minSteps(n / i);
-    }
-    return n;
-}
-```
-
-```java
-public int minSteps(int n) {
-    int[] dp = new int[n + 1];
-    int h = (int) Math.sqrt(n);
-    for (int i = 2; i <= n; i++) {
-        dp[i] = i;
-        for (int j = 2; j <= h; j++) {
-            if (i % j == 0) {
-                dp[i] = dp[j] + dp[i / j];
-                break;
-            }
-        }
-    }
-    return dp[n];
-}
+```python
 ```
 
 
